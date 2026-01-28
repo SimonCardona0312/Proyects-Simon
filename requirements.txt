@@ -1,0 +1,5 @@
+streamlit
+openai-whisper @ git+https://github.com/openai/whisper.git
+google-generativeai
+fpdf
+setuptools-rust
