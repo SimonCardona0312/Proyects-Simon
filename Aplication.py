@@ -85,9 +85,21 @@ if Audio_fill is not None:
             6. FORMATO:
             - No escribas explicaciones adicionales.
             - No agregues comentarios fuera de la transcripción y las diapositivas.
+            
+            7. FILTRO ANTIRRUIDO MAC:
+            - Este audio es una grabación de Mac; ignora la estática y ruidos metálicos.
+            - PROHIBIDO: No utilices caracteres árabes, asiáticos o extraños.
+            - Si el audio no es claro, asume que es Español o Inglés.
+            
+            8. TRADUCCIÓN OBLIGATORIA:
+            - La TRANSCRIPCIÓN debe ser en el idioma original.
+            - Las DIAPOSITIVAS deben estar SIEMPRE en INGLÉS (English) o en ESPAÑOL (Spanish) dependiendo del idioma del audio.
+                        
             """
 
-            answer = modelo_gemini.generate_content(instruction)
+            # Esto detecta si es un archivo de Mac y lo procesa correctamente
+            mime_actual = "video/mp4" if "mp4" in Audio_fill.name else Audio_fill.type
+            answer = modelo_gemini.generate_content([instruction, {"mime_type": mime_actual, "data": Audio_fill.read()}])
             
             st.markdown("---")
             st.header("📝 Generated Content")
@@ -105,3 +117,4 @@ if Audio_fill is not None:
             
 
         st.balloons() 
+
