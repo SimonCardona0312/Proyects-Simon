@@ -3,7 +3,6 @@
 import streamlit as st 
 import whisper         
 import os              
-import fpdf as FPDF
 import google.generativeai as GenAI
 from pptx import Presentation 
 from io import BytesIO
@@ -127,6 +126,7 @@ if Audio_fill is not None:
                 mime="application/vnd.openxmlformats-officedocument.presentationml.presentation"
             )
             st.balloons()
+
 
 
 
