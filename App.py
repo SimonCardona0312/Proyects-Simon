@@ -42,7 +42,7 @@ def crear_pptx(texto):
     return pptx_io.getvalue()
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Transcription Function
-Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "opus" , "m4a"])
+Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "opus" , "aac" ,"m4a"])
 
 if Audio_fill is not None:
 
@@ -133,6 +133,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
