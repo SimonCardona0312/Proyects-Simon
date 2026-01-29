@@ -32,6 +32,7 @@ if Audio_fill is not None:
     # 1. Audio size validation
     if Audio_fill.size > MAX_FILE_SIZE:
         st.error("The audio is too long or too short. Please upload a file shorter than 3 minutes. (MAX 10MB)")
+        st.stop()
     else:
         # 1. I save it and transcribe it.
         with open("temp_audio.mp3", "wb") as f:
@@ -106,3 +107,4 @@ if Audio_fill is not None:
             )
             
         st.balloons() 
+
