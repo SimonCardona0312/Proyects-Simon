@@ -24,53 +24,37 @@ def crear_pdf(texto):
     return pdf.output(dest='S').encode('latin-1')
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Transcription Function
-Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "m4a"])
+# 1. El usuario sube el archivo
+Audio_fill = st.file_uploader("Upload audio", type=["mp3", "mp4" ,"wav", "m4a"])
 
 if Audio_fill is not None:
-    # 1. Definimos el límite (4MB es ideal para ~3 min de Mac)
-    MAX_FILE_SIZE = 4 * 1024 * 1024 
-    
-    # 2. Verificación de tamaño
-    if Audio_fill.size > MAX_FILE_SIZE:
-        st.error(f"❌ ARCHIVO BLOQUEADO: Pesa {Audio_fill.size / (1024*1024):.2f} MB. El límite es 4MB.")
-        st.info("Por favor, sube un audio más corto para continuar.")
-        st.stop() # Detiene la ejecución aquí mismo
+    # Límite estricto: 4MB (Aprox 3 min en Mac)
+    MAX_SIZE = 4 * 1024 * 1024 
 
-    # 3. PROCESAMIENTO (Esta parte solo se lee si el tamaño es correcto)
-    # Guardamos el archivo temporalmente
+    if Audio_fill.size > MAX_SIZE:
+        st.error(f"❌ ARCHIVO DEMASIADO GRANDE ({Audio_fill.size / (1024*1024):.2f} MB). Máximo 4MB.")
+        # Usamos stop() y además NO ponemos un 'else', para que el código termine aquí
+        st.stop() 
+
+    # --- TODO EL PROCESAMIENTO DEBE IR AQUÍ ABAJO ---
+    # Si llegó aquí, es porque el archivo es pequeño.
+    
     with open("temp_audio.mp3", "wb") as f:
         f.write(Audio_fill.getbuffer())
         
     with st.spinner("Whisper is processing..."):
+        # Solo se cargará el modelo si el archivo pasó la prueba de tamaño
         modelo_whisper = whisper.load_model("base")
-        # Aquí es donde se suele trabar si el archivo es de Mac, 
-        # pero al ser pequeño (<4MB) debería ser rápido
         resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
-    st.subheader("This is your transcribed text")
     st.write(resultado["text"])
 
-    # El botón de Gemini debe estar DENTRO del bloque "if Audio_fill is not None"
+    # El botón de Gemini debe estar aquí, protegido por la validación de arriba
     if st.button("✨ Generative Slides"):
-        with st.spinner("Gemini is creating your slides..."):
-            # Usamos 1.5-flash para mayor estabilidad en la nube
-            modelo_gemini = GenAI.GenerativeModel('models/gemini-1.5-flash')
-            
-            # Tu prompt optimizado en inglés para evitar errores de Mac
-            instruction = f"""
-            Analyze the text: {resultado['text']}
-            1. Create a transcript in the original language.
-            2. Create minimum 5 slides in PROFESSIONAL ENGLISH.
-            3. MAC FILTER: Ignore static, do NOT use Arabic or non-Latin characters.
-            Use separator: --- SLIDE N ---
-            """
-
-            answer = modelo_gemini.generate_content(instruction)
-            st.markdown("---")
-            st.write(answer.text)
-            
-            pdf_bytes = crear_pdf(answer.text)
-            st.download_button("💾 Download PDF", data=pdf_bytes, file_name="slides.pdf")
-            st.balloons()
+        with st.spinner("Gemini is working..."):
+            model = GenAI.GenerativeModel('gemini-1.5-flash')
+            # Instrucción simplificada para asegurar que entienda el audio de Mac
+            prompt = f"Analyze this text from a Mac audio: {resultado['text']}. Create 5 slides in English. No Arabic."
+            response = model.generate_content(prompt)
+            st.write(response.text)
