@@ -53,8 +53,7 @@ if Audio_fill is not None:
           
             modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
-            instruction = f
-            """
+            instruction = f"""
   
             Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
 
@@ -105,6 +104,7 @@ if Audio_fill is not None:
                 file_name="Presentation PDF",
                 mime="application/pdf"
             )
+
 
 
 
