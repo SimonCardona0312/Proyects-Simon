@@ -114,18 +114,26 @@ if Audio_fill is not None:
 
             st.markdown("---")
             st.header("📝 Generated Content")
+            
+            # Un contenedor con estilo para el texto de Gemini
+            st.info("Everything is ready! You can review the content below and download your slides.")
             st.write(answer.text)
             
             # Generación del archivo PPTX
             pptx_data = crear_pptx(answer.text)
             
+            # Espaciado extra antes del botón
+            st.write("") 
+            
             st.download_button(
-                label="💾 Download PowerPoint (.pptx)",
+                label="🚀 DOWNLOAD YOUR POWERPOINT",
                 data=pptx_data,
                 file_name="Presentation.pptx",
-                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
