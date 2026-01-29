@@ -23,7 +23,7 @@ GenAI.configure(api_key=st.secrets["API_KEY"])
 # modelos = [m.name for m in GenAI.list_models()]
 # st.write("Modelos que tu llave sí puede ver:", modelos)
 
-Audio_fill = st.file_uploader("Upload your file", type=["mp3", "wav", "m4a"])
+Audio_fill = st.file_uploader("Upload your file", type=["mp3", "wav", "mp4" , "m4a"])
 
 if Audio_fill is not None:
     # 1. Guardar y Transcribir
@@ -73,4 +73,5 @@ if Audio_fill is not None:
         
             
             
+
         st.balloons() 
