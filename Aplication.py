@@ -1,102 +1,66 @@
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Libraries
-import streamlit as st
+import streamlit as st 
 import google.generativeai as GenAI
 from fpdf import FPDF
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-# This is the visual part of the page 
+
+# 1. Configuración de la página
 st.set_page_config(page_title="Gen", page_icon="🪄")
 st.title("🪄 Transcription and Slide Creator")
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Enter your API key here
+
+# 2. API KEY desde Secrets
 GenAI.configure(api_key=st.secrets["API_KEY"])
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# PDF Function
+
+# 3. Función PDF CORREGIDA (Sin error de encoding)
 def crear_pdf(texto):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
+    # Limpiamos el texto para que FPDF no explote con tildes o símbolos
     texto_limpio = texto.encode('latin-1', 'ignore').decode('latin-1')
     pdf.multi_cell(0, 10, txt=texto_limpio)
-    return pdf.output(dest='S')
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Transcription function 
-audio_file = st.file_uploader("Upload your audio so we can transcribe it and desing the slides", type=["mp3","mp4","wav", "m4a"])
+    # Retornamos los bytes directamente (esto arregla tu error)
+    return pdf.output(dest='S').encode('latin-1')
 
-if audio_file is not None:
-    st.audio(audio_file)
-    
-    if st.button("✨ Process Audio"):
-        with st.spinner("Gimini is listening and writing..."):
+# 4. Carga de Archivo
+Audio_fill = st.file_uploader("Upload your audio", type=["mp3", "mp4" ,"wav", "m4a"])
+
+if Audio_fill is not None:
+    st.audio(Audio_fill) # Para que verifiques que el audio subió bien
+
+    if st.button("✨ Generative Slides"):
+        with st.spinner("Gemini is analyzing your Mac audio..."):
             try:
-                model = GenAI.GenerativeModel('models/gemini-3-flash-preview')
+                # Usamos 1.5-flash por estabilidad y cuota
+                modelo_gemini = GenAI.GenerativeModel('models/gemini-1.5-flash')
                 
-                # Le pedimos específicamente la transcripción Y las diapositivas
-                prompt = (
-                """""
-Analiza el audio y genera ÚNICAMENTE diapositivas claramente separadas.
+                instruction = """
+                Analiza el audio proporcionado y genera ÚNICAMENTE diapositivas claramente separadas.
+                Reglas obligatorias:
+                1. TRANSCRIPCIÓN: Escribe el texto EXACTO del audio en su IDIOMA ORIGINAL bajo === TRANSCRIPCIÓN ===.
+                2. IDIOMA DIAPOSITIVAS: Genera las diapositivas EXCLUSIVAMENTE EN INGLÉS.
+                3. FILTRO MAC: Ignora ruidos de estática. PROHIBIDO usar árabe o caracteres extraños.
+                4. ESTRUCTURA: Mínimo 5 diapositivas separadas por --- DIAPOSITIVA N ---.
+                """
 
-Reglas obligatorias:
-
-1. IDIOMA:
-   - Detecta el idioma principal del audio.
-   - TODO el contenido generado DEBE estar EXCLUSIVAMENTE en ese idioma.
-   - No mezcles idiomas ni traduzcas.
-
-2. TRANSCRIPCIÓN:
-   - Incluye la transcripción completa del audio.
-   - Escríbela únicamente en el idioma original.
-   - Colócala al inicio bajo el encabezado:
-     === TRANSCRIPCIÓN ===
-
-3. DETECCIÓN DE INSTRUCCIÓN:
-   - Determina si el audio contiene una instrucción clara para crear contenido.
-
-4. SI EXISTE UNA INSTRUCCIÓN CLARA:
-   - Genera una presentación con un MÍNIMO de 5 DIAPOSITIVAS.
-   - Cada diapositiva debe estar claramente separada y numerada.
-   - Cada diapositiva debe representar una idea o parte distinta del contenido solicitado.
-   - El contenido puede ser texto continuo o en líneas, no hay restricciones internas de formato.
-
-   Usa EXACTAMENTE este separador para cada diapositiva:
-
-   --- DIAPOSITIVA N ---
-
-5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
-   - Genera SOLO UNA diapositiva.
-   - Indica claramente que se necesita una instrucción explícita en el audio.
-
-6. FORMATO:
-   - No escribas explicaciones adicionales.
-   - No agregues comentarios fuera de la transcripción y las diapositivas.
-
-
-
-                """""
-                )
-                
-                response = model.generate_content([
-                    prompt,
-                    {"mime_type": "audio/mp3", "data": audio_file.read()}
+                # ENVIAMOS DIRECTO A GEMINI (Sin Whisper)
+                # Usamos video/mp4 porque es como Mac guarda esos archivos
+                response = modelo_gemini.generate_content([
+                    instruction, 
+                    {"mime_type": "video/mp4", "data": Audio_fill.read()}
                 ])
                 
-                todo_el_contenido = response.text
-                
-                # Mostramos el resultado en la app
                 st.markdown("---")
-                st.subheader("📝 Generated Content")
-                st.write(todo_el_contenido)
+                st.header("📝 Generated Content")
+                st.write(response.text)
                 
-                # Opción de descarga
-                pdf_output = crear_pdf(todo_el_contenido)
+                # Generar y descargar PDF
+                pdf_bytes = crear_pdf(response.text)
                 st.download_button(
-                    label="📥 Download and transcript and slides(PDF)",
-                    data=bytes(pdf_output),
-                    file_name="analisis_audio.pdf",
+                    label="💾 Download PDF",
+                    data=pdf_bytes,
+                    file_name="presentation.pdf",
                     mime="application/pdf"
                 )
-                
-            except Exception as e:
-                st.error(f"Error: {e}")
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                st.balloons()
 
+            except Exception as e:
+                st.error(f"Hubo un error: {e}")
