@@ -32,7 +32,7 @@ Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["m
 
 if Audio_fill is not None:
     # 1. VALIDACIÓN DE TAMAÑO (Límite estricto de 4MB para aprox. 3 minutos en Mac)
-    MAX_FILE_SIZE = 4 * 1024 * 1024 
+    MAX_FILE_SIZE = 1 * 1024 
     
     if Audio_fill.size > MAX_FILE_SIZE:
         st.error(f"❌ Error: File too large ({Audio_fill.size / (1024*1024):.2f} MB). Max limit is 4MB (~3 minutes).")
@@ -90,3 +90,4 @@ if Audio_fill is not None:
             )
             
         st.balloons()
+
