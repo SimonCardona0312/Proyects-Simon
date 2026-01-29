@@ -30,7 +30,7 @@ if Audio_fill is not None:
         with st.spinner("Gemini is analyzing your Mac audio..."):
             try:
                 # Usamos 1.5-flash por estabilidad y cuota
-                modelo_gemini = GenAI.GenerativeModel('models/gemini-1.5-flash')
+                modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
                 
                 instruction = """
                 Analiza el audio proporcionado y genera ÚNICAMENTE diapositivas claramente separadas.
@@ -64,3 +64,4 @@ if Audio_fill is not None:
 
             except Exception as e:
                 st.error(f"Hubo un error: {e}")
+
