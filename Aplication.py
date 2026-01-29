@@ -85,6 +85,12 @@ if Audio_fill is not None:
             6. FORMATO:
             - No escribas explicaciones adicionales.
             - No agregues comentarios fuera de la transcripción y las diapositivas.
+            7. TRATAMIENTO DE AUDIO DE MAC:
+            - Este audio proviene de una grabación nativa de Mac; ignora cualquier ruido metálico o estática inicial.
+            - IMPORTANTE: Si detectas sonidos que parecen otros idiomas (como árabe, etc..), RECHÁZALOS. 
+            - Procesa el audio ÚNICAMENTE en ESPAÑOL o INGLÉS.      
+            7. REGLA DE TRADUCCIÓN:
+            - Sin importar si el audio es el de Spanish o English, genera las DIAPOSITIVAS siempre en el idioma del audio profesional.
             """
 
             answer = modelo_gemini.generate_content(instruction)
@@ -105,3 +111,4 @@ if Audio_fill is not None:
             
 
         st.balloons() 
+
