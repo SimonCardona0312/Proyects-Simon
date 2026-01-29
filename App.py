@@ -76,38 +76,30 @@ if Audio_fill is not None:
             Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
 
             Mandatory rules:
+            TASK: 
+            Analyze the following text from an audio: "{resultado['text']}"
+            Your goal is to transform this information into a professional presentation.
 
-            1. LANGUAGE:
-            - Detect the main language of the audio.
-            - ALL generated content MUST be EXCLUSIVELY in that language.
-            - Do not mix languages or translate.
+            MANDATORY RULES:
+            1. AUTOMATIC CREATION: 
+               - Do not wait for an instruction. 
+               - Convert the main topics, ideas, or story of the audio into a structured presentation.
 
-            2. TRANSCRIPTION:
-            - Include the complete transcription of the audio.
-            - Write it only in the original language.
-            - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
+            2. LANGUAGE:
+               - Use the same language as the audio for everything.
 
-            3. INSTRUCTION DETECTION:
-            - Determine whether the audio contains a clear instruction to create content.
+            3. STRUCTURE:
+               - Include the transcription first under: === TRANSCRIPTION ===
+               - Create a MINIMUM of 5 slides based on the content.
+               - If the audio is very short, expand the ideas to reach the 5 slides.
+               - Use EXACTLY this separator: --- SLIDE N ---
 
-            4. IF A CLEAR INSTRUCTION EXISTS:
-            - Generate a presentation with a MINIMUM of 5 SLIDES.
-            - Each slide must be clearly separated and numbered.
-            - Each slide must represent a distinct idea or part of the requested content.
-            - The content may be continuous text or in lines; there are no internal formatting restrictions.
+            4. SLIDE CONTENT:
+               - Each slide must have a Title and a clear Summary of an idea from the audio.
+               - Do not add meta-comments (like "I have analyzed the audio"). Just the content.
 
-            Use EXACTLY this separator for each slide:
-
-            --- SLIDE N ---
-
-            5. IF NO CLEAR INSTRUCTION EXISTS:
-            - Generate ONLY ONE slide.
-            - Clearly indicate that an explicit instruction is needed in the audio.
-
-            6. FORMAT:
-            - Do not write additional explanations.
-            - Do not add comments outside the transcription and the slides.
+            5. MAC FILTER:
+               - Ignore background noise or static. Do not use non-Latin characters.
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
@@ -133,6 +125,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
