@@ -104,7 +104,19 @@ if Audio_fill is not None:
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
 
-            st.markdown("---")
+            st.markdown(
+                """
+                <style>
+                .stApp {
+                    background-image: url("https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndndndndndndndndndndndndndndndndndndnd/giphy.gif");
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+)
             st.header("📝 Generated Content")
             
             # Un contenedor con estilo para el texto de Gemini
