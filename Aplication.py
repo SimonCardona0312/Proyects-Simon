@@ -5,7 +5,8 @@ import whisper
 import os              
 import fpdf as FPDF
 import google.generativeai as GenAI
-from fpdf import FPDF
+from pptx import Presentation 
+from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
@@ -14,14 +15,32 @@ st.title("🪄 Transcription and Slide Creator")
 #Enter your API KEY here 
 GenAI.configure(api_key=st.secrets["API_KEY"])
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#PDF Function
-def crear_pdf(texto):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    texto_limpio = texto.encode('latin-1', 'ignore').decode('latin-1')
-    pdf.multi_cell(0, 10, txt=texto_limpio)
-    return pdf.output(dest='S').encode('latin-1')
+# PowerPoint Function
+def crear_pptx(texto):
+    prs = Presentation()
+    
+    # Separamos el contenido por el marcador definido en el prompt
+    secciones = texto.split("--- SLIDE")
+    
+    for i, seccion in enumerate(secciones):
+        if seccion.strip():
+            # Usamos un diseño de diapositiva estándar (Título y Cuerpo)
+            slide_layout = prs.slide_layouts[1] 
+            slide = prs.slides.add_slide(slide_layout)
+            
+            # Limpiamos el texto para el título y cuerpo
+            lineas = seccion.strip().split('\n')
+            
+            title_shape = slide.shapes.title
+            body_shape = slide.placeholders[1]
+            
+            title_shape.text = f"Slide {i}" if i > 0 else "Presentation Intro"
+            body_shape.text = seccion.strip()
+
+    # Guardamos en un objeto BytesIO para que Streamlit pueda descargarlo
+    pptx_io = BytesIO()
+    prs.save(pptx_io)
+    return pptx_io.getvalue()
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Transcription Function
 Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "m4a"])
@@ -97,13 +116,17 @@ if Audio_fill is not None:
             st.markdown("---")
             st.header("📝 Generated Content")
             st.write(answer.text)
-            pdf_bytes = crear_pdf(answer.text)
+            
+            # Generación del archivo PPTX
+            pptx_data = crear_pptx(answer.text)
+            
             st.download_button(
-                label="💾 Download PDF",
-                data=pdf_bytes,
-                file_name="Presentation PDF",
-                mime="application/pdf"
+                label="💾 Download PowerPoint (.pptx)",
+                data=pptx_data,
+                file_name="Presentation.pptx",
+                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation"
             )
+            st.balloons()
 
 
 
