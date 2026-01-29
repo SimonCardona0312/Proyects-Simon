@@ -33,18 +33,18 @@ if Audio_fill is not None:
         f.write(Audio_fill.getbuffer())
         
     # Mostramos un mensaje de carga para que el usuario espere
-    with st.spinner("Whisper is pr"):
+    with st.spinner("Whisper is processing your audio"):
         modelo_whisper = whisper.load_model("base")
         resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
-    st.subheader("This is your tex")
+    st.subheader("This is your transcribed text")
     st.write(resultado["text"])
 
 
     if st.button("✨ Generative Slides"):
         
-        with st.spinner("Gemini está creando tus diapositivas..."):
+        with st.spinner("Gemini is creating your slides..."):
           
             modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
