@@ -50,50 +50,43 @@ if Audio_fill is not None:
             
             instruction = f"""
   
-            Analiza el audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
+Analyze the following audio/text: {resultado['text']} and generate ONLY clearly separated slides.
 
-            Reglas obligatorias:
+### MANDATORY RULES:
 
-            1. IDIOMA:
-            - Detecta el idioma principal del audio.
-            - TODO el contenido generado DEBE estar EXCLUSIVAMENTE en ese idioma.
-            - No mezcles idiomas ni traduzcas.
+1. LANGUAGE & TRANSLATION:
+- TRANSCRIPTION: Must be written in the ORIGINAL language of the audio (Spanish or English).
+- SLIDE CONTENT: All slides MUST be generated EXCLUSIVELY in PROFESSIONAL ENGLISH, regardless of the audio's original language.
+- If the audio is in Spanish, you must translate the content into English for the slides.
 
-            2. TRANSCRIPCIÓN:
-            - Incluye la transcripción completa del audio.
-            - Escríbela únicamente en el idioma original.
-            - Colócala al inicio bajo el encabezado:
-                === TRANSCRIPCIÓN ===
+2. TRANSCRIPTION FORMAT:
+- Include the complete transcription of the audio.
+- Write it only in the original language.
+- Place it at the beginning under the header:
+  === TRANSCRIPTION ===
 
-            3. DETECCIÓN DE INSTRUCCIÓN:
-            - Determina si el audio contiene una instrucción clara para crear contenido.
+3. INSTRUCTION DETECTION:
+- Determine if the audio contains a clear instruction to create specific content.
 
-            4. SI EXISTE UNA INSTRUCCIÓN CLARA:
-            - Genera una presentación con un MÍNIMO de 5 DIAPOSITIVAS.
-            - Cada diapositiva debe estar claramente separada y numerada.
-            - Cada diapositiva debe representar una idea o parte distinta del contenido solicitado.
-            - El contenido puede ser texto continuo o en líneas, no hay restricciones internas de formato.
+4. IF A CLEAR INSTRUCTION EXISTS:
+- Generate a presentation with a MINIMUM of 5 SLIDES.
+- Each slide must be clearly separated and numbered.
+- Each slide must represent a distinct idea or part of the requested content.
+- Use EXACTLY this separator for each slide:
+  --- SLIDE N ---
 
-            Usa EXACTAMENTE este separador para cada diapositiva:
+5. IF NO CLEAR INSTRUCTION EXISTS:
+- Generate ONLY ONE slide.
+- Clearly state in English that an explicit instruction is needed from the audio.
 
-            --- DIAPOSITIVA N ---
+6. MAC AUDIO & ANTI-HALLUCINATION:
+- This is a native Mac recording; ignore background static, clicks, or metallic interference.
+- STRICT PROHIBITION: Do not use Arabic, Asian, or any non-Latin characters.
+- If the audio is unclear, default to Spanish or English as the source.
 
-            5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
-            - Genera SOLO UNA diapositiva.
-            - Indica claramente que se necesita una instrucción explícita en el audio.
-
-            6. FORMATO:
-            - No escribas explicaciones adicionales.
-            - No agregues comentarios fuera de la transcripción y las diapositivas.
-            
-            7. FILTRO ANTIRRUIDO MAC:
-            - Este audio es una grabación de Mac; ignora la estática y ruidos metálicos.
-            - PROHIBIDO: No utilices caracteres árabes, asiáticos o extraños.
-            - Si el audio no es claro, asume que es Español o Inglés.
-            
-            8. TRADUCCIÓN OBLIGATORIA:
-            - La TRANSCRIPCIÓN debe ser en el idioma original.
-            - Las DIAPOSITIVAS deben estar SIEMPRE en INGLÉS (English) o en ESPAÑOL (Spanish) dependiendo del idioma del audio.
+7. FORMATTING:
+- Do not write additional explanations.
+- Do not add comments outside of the transcription and the slides.
                         
             """
 
@@ -117,4 +110,5 @@ if Audio_fill is not None:
             
 
         st.balloons() 
+
 
