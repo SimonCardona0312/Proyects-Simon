@@ -93,7 +93,7 @@ if Audio_fill is not None:
             - La TRANSCRIPCIÓN debe ser en el idioma original del audio.
             - Las DIAPOSITIVAS deben generarse ÚNICAMENTE en INGLÉS (English), sin importar el idioma del audio.
             - Si el audio es en español, traduce el contenido para las diapositivas pero mantén la transcripción literal.
-
+            """
             answer = modelo_gemini.generate_content(instruction)
             
             st.markdown("---")
@@ -112,5 +112,6 @@ if Audio_fill is not None:
             
 
         st.balloons() 
+
 
 
