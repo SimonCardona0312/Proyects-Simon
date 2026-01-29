@@ -1,93 +1,107 @@
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Libraries
+#Libraries
 import streamlit as st 
 import whisper         
 import os              
+import fpdf as FPDF
 import google.generativeai as GenAI
 from fpdf import FPDF
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Page Config
+# This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
 st.title("🪄 Transcription and Slide Creator")
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# API Key Configuration
+#Enter your API KEY here 
 GenAI.configure(api_key=st.secrets["API_KEY"])
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# PDF Function
+#PDF Function
 def crear_pdf(texto):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-    # Limpieza de caracteres para evitar errores en el PDF
     texto_limpio = texto.encode('latin-1', 'ignore').decode('latin-1')
     pdf.multi_cell(0, 10, txt=texto_limpio)
     return pdf.output(dest='S').encode('latin-1')
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Transcription & Logic Function
+#Transcription Function
 Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "m4a"])
 
 if Audio_fill is not None:
-    # 1. VALIDACIÓN DE TAMAÑO (Límite estricto de 4MB para aprox. 3 minutos en Mac)
-    MAX_FILE_SIZE = 1 * 1024 
-    
-    if Audio_fill.size > MAX_FILE_SIZE:
-        st.error(f"❌ Error: File too large ({Audio_fill.size / (1024*1024):.2f} MB). Max limit is 4MB (~3 minutes).")
-        st.stop() # Detiene la ejecución por completo aquí
 
-    # 2. PROCESAMIENTO (Solo si el archivo es menor a 4MB)
-    with open("temp_audio.mp3", "wb") as f:
-        f.write(Audio_fill.getbuffer())
-        
-    with st.spinner("Whisper is processing your audio..."):
-        modelo_whisper = whisper.load_model("base")
-        resultado = modelo_whisper.transcribe("temp_audio.mp3")
+    MAX_FILE_SIZE = 10 * 1024 * 1024
+    # 1. Audio size validation
+    if Audio_fill.size > MAX_FILE_SIZE:
+        st.error("The audio is too long or too short. Please upload a file shorter than 3 minutes. (MAX 10MB)")
+        st.stop()
+    else:
+        # 1. I save it and transcribe it.
+        with open("temp_audio.mp3", "wb") as f:
+            f.write(Audio_fill.getbuffer())
+            
+        # We show the loading message so the user can wait.
+        with st.spinner("Whisper is processing your audio"):
+            modelo_whisper = whisper.load_model("base")
+            resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
     st.subheader("This is your transcribed text")
     st.write(resultado["text"])
 
     if st.button("✨ Generative Slides"):
+        
         with st.spinner("Gemini is creating your slides..."):
-            # Usamos 1.5-flash por ser el más rápido y estable en la nube
-            modelo_gemini = GenAI.GenerativeModel('models/gemini-1.5-flash')
+          
+            modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
-            # Prompt optimizado en inglés para evitar alucinaciones en árabe
-            instruction = f"""
-            Analyze the following text: "{resultado['text']}" 
-            And generate ONLY clearly separated slides according to these rules:
+            instruction = f
+            """
+  
+            Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
+
+            Mandatory rules:
 
             1. LANGUAGE:
-            - TRANSCRIPTION: Keep the original text under the header === TRANSCRIPCIÓN ===.
-            - SLIDES: Generate ALL slide content EXCLUSIVELY in PROFESSIONAL ENGLISH.
-            - If the original text is in Spanish, translate it to English for the slides.
+            - Detect the main language of the audio.
+            - ALL generated content MUST be EXCLUSIVELY in that language.
+            - Do not mix languages or translate.
 
-            2. MAC AUDIO CORRECTION (Anti-Hallucination):
-            - The source is a Mac recording; ignore any background static or metallic noise.
-            - STRICT PROHIBITION: Do not use Arabic, Asian, or non-Latin characters.
+            2. TRANSCRIPTION:
+            - Include the complete transcription of the audio.
+            - Write it only in the original language.
+            - Place it at the beginning under the heading:
+                === TRANSCRIPTION ===
 
-            3. STRUCTURE:
-            - Minimum of 5 slides if an instruction is found.
-            - Use EXACTLY this separator for each slide: --- SLIDE N ---
-            - No extra comments, no greetings.
+            3. INSTRUCTION DETECTION:
+            - Determine whether the audio contains a clear instruction to create content.
+
+            4. IF A CLEAR INSTRUCTION EXISTS:
+            - Generate a presentation with a MINIMUM of 5 SLIDES.
+            - Each slide must be clearly separated and numbered.
+            - Each slide must represent a distinct idea or part of the requested content.
+            - The content may be continuous text or in lines; there are no internal formatting restrictions.
+
+            Use EXACTLY this separator for each slide:
+
+            --- SLIDE N ---
+
+            5. IF NO CLEAR INSTRUCTION EXISTS:
+            - Generate ONLY ONE slide.
+            - Clearly indicate that an explicit instruction is needed in the audio.
+
+            6. FORMAT:
+            - Do not write additional explanations.
+            - Do not add comments outside the transcription and the slides.
             """
-
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
 
             st.markdown("---")
             st.header("📝 Generated Content")
             st.write(answer.text)
-            
             pdf_bytes = crear_pdf(answer.text)
             st.download_button(
                 label="💾 Download PDF",
                 data=pdf_bytes,
-                file_name="Presentation.pdf",
+                file_name="Presentation PDF",
                 mime="application/pdf"
             )
-            
-        st.balloons()
-
