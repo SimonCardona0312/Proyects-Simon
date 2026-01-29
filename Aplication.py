@@ -1,13 +1,20 @@
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Libraries
 import streamlit as st 
 import whisper         
 import os              
 import fpdf as FPDF
 import google.generativeai as GenAI
-
-st.title("Slides Generators")
-#
 from fpdf import FPDF
-
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# This is the visual part of the page 
+st.set_page_config(page_title="Gen", page_icon="🪄")
+st.title("🪄 Transcription and Slide Creator")
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Enter your API KEY here 
+GenAI.configure(api_key=st.secrets["API_KEY"])
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#PDF Function
 def crear_pdf(texto):
     pdf = FPDF()
     pdf.add_page()
@@ -16,14 +23,9 @@ def crear_pdf(texto):
     texto_limpio = texto.encode('latin-1', 'ignore').decode('latin-1')
     pdf.multi_cell(0, 10, txt=texto_limpio)
     return pdf.output(dest='S').encode('latin-1')
-
-
-
-GenAI.configure(api_key=st.secrets["API_KEY"])
-# modelos = [m.name for m in GenAI.list_models()]
-# st.write("Modelos que tu llave sí puede ver:", modelos)
-
-Audio_fill = st.file_uploader("Upload your file", type=["mp3", "wav", "mp4" , "m4a"])
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Transcription Function
+Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "m4a"])
 
 if Audio_fill is not None:
     # 1. Guardar y Transcribir
@@ -31,7 +33,7 @@ if Audio_fill is not None:
         f.write(Audio_fill.getbuffer())
         
     # Mostramos un mensaje de carga para que el usuario espere
-    with st.spinner("Whisper está procesando el audio..."):
+    with st.spinner("Whisper is pr"):
         modelo_whisper = whisper.load_model("base")
         resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
@@ -47,26 +49,54 @@ if Audio_fill is not None:
             modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
             instruction = f"""
-            Actúa como un diseñador profesional.
-            Tarea: Crea una presentación basada en este texto: {resultado['text']}
-            
-            Instrucciones:
-            1. Crea mínimo 5 diapositivas.
-            2. Cada una con Título, Viñetas y Notas del orador.
-            3. Formato profesional.
+  
+            Analiza el audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
+
+            Reglas obligatorias:
+
+            1. IDIOMA:
+            - Detecta el idioma principal del audio.
+            - TODO el contenido generado DEBE estar EXCLUSIVAMENTE en ese idioma.
+            - No mezcles idiomas ni traduzcas.
+
+            2. TRANSCRIPCIÓN:
+            - Incluye la transcripción completa del audio.
+            - Escríbela únicamente en el idioma original.
+            - Colócala al inicio bajo el encabezado:
+                === TRANSCRIPCIÓN ===
+
+            3. DETECCIÓN DE INSTRUCCIÓN:
+            - Determina si el audio contiene una instrucción clara para crear contenido.
+
+            4. SI EXISTE UNA INSTRUCCIÓN CLARA:
+            - Genera una presentación con un MÍNIMO de 5 DIAPOSITIVAS.
+            - Cada diapositiva debe estar claramente separada y numerada.
+            - Cada diapositiva debe representar una idea o parte distinta del contenido solicitado.
+            - El contenido puede ser texto continuo o en líneas, no hay restricciones internas de formato.
+
+            Usa EXACTAMENTE este separador para cada diapositiva:
+
+            --- DIAPOSITIVA N ---
+
+            5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
+            - Genera SOLO UNA diapositiva.
+            - Indica claramente que se necesita una instrucción explícita en el audio.
+
+            6. FORMATO:
+            - No escribas explicaciones adicionales.
+            - No agregues comentarios fuera de la transcripción y las diapositivas.
             """
-            
 
             answer = modelo_gemini.generate_content(instruction)
             
             st.markdown("---")
-            st.header("📋 Tu Presentación está lista:")
+            st.header("📝 Generated Content")
             st.write(answer.text)
             pdf_bytes = crear_pdf(answer.text)
             st.download_button(
-                label="💾 Descargar como PDF",
+                label="💾 Download PDF",
                 data=pdf_bytes,
-                file_name="presentacion.pdf",
+                file_name="Presentation PDF",
                 mime="application/pdf"
             )
             
