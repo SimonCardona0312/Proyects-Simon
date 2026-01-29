@@ -28,7 +28,7 @@ Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["m
 
 if Audio_fill is not None:
 
-    MAX_FILE_SIZE = 10 * 1024 * 1024
+    MAX_FILE_SIZE = 1 * 1024
     # 1. Audio size validation
     if Audio_fill.size > MAX_FILE_SIZE:
         st.error("The audio is too long or too short. Please upload a file shorter than 3 minutes. (MAX 10MB)")
@@ -105,3 +105,4 @@ if Audio_fill is not None:
                 file_name="Presentation PDF",
                 mime="application/pdf"
             )
+
