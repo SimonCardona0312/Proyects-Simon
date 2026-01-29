@@ -38,7 +38,7 @@ if Audio_fill is not None:
         resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
-    st.subheader("Este es el texto extraído:")
+    st.subheader("This is your tex")
     st.write(resultado["text"])
 
 
@@ -50,49 +50,44 @@ if Audio_fill is not None:
             
             instruction = f"""
   
-Analyze the following audio/text: {resultado['text']} and generate ONLY clearly separated slides.
+            Analiza el audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
 
-### MANDATORY RULES:
+            Reglas obligatorias:
 
-1. LANGUAGE & TRANSLATION:
-- TRANSCRIPTION: Must be written in the ORIGINAL language of the audio (Spanish or English).
-- SLIDE CONTENT: All slides MUST be generated EXCLUSIVELY in PROFESSIONAL ENGLISH, regardless of the audio's original language.
-- If the audio is in Spanish, you must translate the content into English for the slides.
+            1. IDIOMA:
+            - Detecta el idioma principal del audio.
+            - TODO el contenido generado DEBE estar EXCLUSIVAMENTE en ese idioma.
+            - No mezcles idiomas ni traduzcas.
 
-2. TRANSCRIPTION FORMAT:
-- Include the complete transcription of the audio.
-- Write it only in the original language.
-- Place it at the beginning under the header:
-  === TRANSCRIPTION ===
+            2. TRANSCRIPCIÓN:
+            - Incluye la transcripción completa del audio.
+            - Escríbela únicamente en el idioma original.
+            - Colócala al inicio bajo el encabezado:
+                === TRANSCRIPCIÓN ===
 
-3. INSTRUCTION DETECTION:
-- Determine if the audio contains a clear instruction to create specific content.
+            3. DETECCIÓN DE INSTRUCCIÓN:
+            - Determina si el audio contiene una instrucción clara para crear contenido.
 
-4. IF A CLEAR INSTRUCTION EXISTS:
-- Generate a presentation with a MINIMUM of 5 SLIDES.
-- Each slide must be clearly separated and numbered.
-- Each slide must represent a distinct idea or part of the requested content.
-- Use EXACTLY this separator for each slide:
-  --- SLIDE N ---
+            4. SI EXISTE UNA INSTRUCCIÓN CLARA:
+            - Genera una presentación con un MÍNIMO de 5 DIAPOSITIVAS.
+            - Cada diapositiva debe estar claramente separada y numerada.
+            - Cada diapositiva debe representar una idea o parte distinta del contenido solicitado.
+            - El contenido puede ser texto continuo o en líneas, no hay restricciones internas de formato.
 
-5. IF NO CLEAR INSTRUCTION EXISTS:
-- Generate ONLY ONE slide.
-- Clearly state in English that an explicit instruction is needed from the audio.
+            Usa EXACTAMENTE este separador para cada diapositiva:
 
-6. MAC AUDIO & ANTI-HALLUCINATION:
-- This is a native Mac recording; ignore background static, clicks, or metallic interference.
-- STRICT PROHIBITION: Do not use Arabic, Asian, or any non-Latin characters.
-- If the audio is unclear, default to Spanish or English as the source.
+            --- DIAPOSITIVA N ---
 
-7. FORMATTING:
-- Do not write additional explanations.
-- Do not add comments outside of the transcription and the slides.
-                        
+            5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
+            - Genera SOLO UNA diapositiva.
+            - Indica claramente que se necesita una instrucción explícita en el audio.
+
+            6. FORMATO:
+            - No escribas explicaciones adicionales.
+            - No agregues comentarios fuera de la transcripción y las diapositivas.
             """
 
-            # Esto detecta si es un archivo de Mac y lo procesa correctamente
-            mime_actual = "video/mp4" if "mp4" in Audio_fill.name else Audio_fill.type
-            answer = modelo_gemini.generate_content([instruction, {"mime_type": mime_actual, "data": Audio_fill.read()}])
+            answer = modelo_gemini.generate_content(instruction)
             
             st.markdown("---")
             st.header("📝 Generated Content")
@@ -110,5 +105,3 @@ Analyze the following audio/text: {resultado['text']} and generate ONLY clearly 
             
 
         st.balloons() 
-
-
