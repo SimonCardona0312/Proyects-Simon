@@ -1,6 +1,6 @@
 streamlit
 openai-whisper
 setuptools-rust
-fpdf
 google-generativeai
 python-pptx
+
