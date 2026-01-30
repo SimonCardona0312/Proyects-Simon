@@ -72,43 +72,51 @@ if Audio_fill is not None:
             modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
             instruction = f"""
-              
-           Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
+                Analiza el siguiente audio transcrito: {resultado["text"]}
 
-            Mandatory rules:
-
-            1. LANGUAGE:
-            - Detect the main language of the audio.
-            - ALL generated content MUST be EXCLUSIVELY in that language.
-            - Do not mix languages or translate.
-
-            2. TRANSCRIPTION:
-            - Include the complete transcription of the audio.
-            - Write it only in the original language.
-            - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
-
-            3. INSTRUCTION DETECTION:
-            - Determine whether the audio contains a clear instruction to create content.
-
-            4. IF A CLEAR INSTRUCTION EXISTS:
-            - Generate a presentation with a MINIMUM of 5 SLIDES.
-            - Each slide must be clearly separated and numbered.
-            - Each slide must represent a distinct idea or part of the requested content.
-            - The content may be continuous text or in lines; there are no internal formatting restrictions.
-
-            Use EXACTLY this separator for each slide:
-
-            --- SLIDE N ---
-
-            5. IF NO CLEAR INSTRUCTION EXISTS:
-            - Generate ONLY ONE slide.
-            - Clearly indicate that an explicit instruction is needed in the audio.
-
-            6. FORMAT:
-            - Do not write additional explanations.
-            - Do not add comments outside the transcription and the slides.
-            """
+                Tu tarea es generar ÚNICAMENTE diapositivas claramente separadas, cumpliendo TODAS las reglas a continuación sin excepción.
+                
+                ────────────────────────
+                REGLAS OBLIGATORIAS
+                ────────────────────────
+                
+                1. IDIOMA
+                - Detecta automáticamente el idioma principal del audio.
+                - TODO el contenido generado debe estar EXCLUSIVAMENTE en ese idioma.
+                - No traduzcas, no mezcles idiomas y no aclares en otro idioma.
+                
+                2. TRANSCRIPCIÓN
+                - Incluye la transcripción COMPLETA del audio.
+                - Escríbela exactamente en el idioma original detectado.
+                - Debe aparecer AL INICIO del resultado, bajo el encabezado EXACTO:
+                
+                ▣ STREAMLIT TRANSCRIPTION ▣
+                
+                3. DETECCIÓN DE INSTRUCCIONES
+                - Analiza si el audio contiene una instrucción CLARA y EXPLÍCITA para crear contenido
+                  (por ejemplo: “haz una presentación”, “explícame”, “resume”, “crea diapositivas”, etc.).
+                
+                4. SI EXISTE UNA INSTRUCCIÓN CLARA
+                - Genera una presentación con un MÍNIMO de 5 diapositivas.
+                - Cada diapositiva debe:
+                  - Estar claramente separada
+                  - Estar numerada
+                  - Representar UNA idea distinta o una parte del contenido solicitado
+                - Usa EXACTAMENTE este separador para cada diapositiva (sin modificarlo):
+                
+                ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
+                
+                5. SI NO EXISTE UNA INSTRUCCIÓN CLARA
+                - Crea un MÍNIMO de 5 diapositivas:
+                  - Explicando claramente el contenido del audio
+                  - Resumiendo y estructurando lo que se dijo
+                  - Indicando al usuario que puede solicitar algo más específico si lo desea
+                - Mantén el mismo formato y separador de diapositivas indicado arriba.
+                
+                6. FORMATO
+                - No incluyas texto fuera de la transcripción y las diapositivas.
+                - No agregues introducciones, conclusiones ni explicaciones adicionales.
+                """
 
           
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -134,6 +142,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
