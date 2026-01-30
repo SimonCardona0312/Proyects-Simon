@@ -84,7 +84,7 @@ if Audio_fill is not None:
             - Include the complete transcription of the audio.
             - Write it only in the original language.
             - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
+                ▣ STREAMLIT TRANSCRIPTION ▣
 
             3. INSTRUCTION DETECTION:
             - Determine whether the audio contains a clear instruction to create content.
@@ -97,7 +97,8 @@ if Audio_fill is not None:
 
             Use EXACTLY this separator for each slide:
 
-            --- SLIDE N ---
+            ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
+
 
             5. IF NO CLEAR INSTRUCTION EXISTS:
             - Generate ONLY ONE slide.
@@ -109,7 +110,24 @@ if Audio_fill is not None:
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
-            st.markdown("---")
+            st.markdown("""
+                <style>
+                .stApp {
+                    background-image: url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXF6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif");
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                }
+                /* Esto hace que el fondo de los textos sea un poco oscuro para que se lean mejor */
+                .main {
+                    background-color: rgba(0, 0, 0, 0.6);
+                    padding: 20px;
+                    border-radius: 15px;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
             st.header("📝 Generated Content")
             
             st.info("Everything is ready! You can review the content below and download your slides.")
@@ -128,7 +146,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
 
 
 
