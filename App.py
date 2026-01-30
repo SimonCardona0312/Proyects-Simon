@@ -8,7 +8,9 @@ from pptx import Presentation
 from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
-url_imagen = "https://i.pinimg.com/736x/8b/12/34/tu_imagen_aqui.jpg"
+st.set_page_config(page_title="Gen", page_icon="🪄")
+# Puedes usar un link directo de Pinterest o de cualquier página
+url_imagen = "https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg"
 
 st.markdown(
     f"""
@@ -38,7 +40,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.set_page_config(page_title="Gen", page_icon="🪄")
 st.title("🪄 Transcription and Slide Creator")
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Enter your API KEY here 
@@ -139,7 +140,7 @@ if Audio_fill is not None:
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
-        
+            
             st.header("📝 Generated Content")
             
             st.info("Everything is ready! You can review the content below and download your slides.")
@@ -158,9 +159,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
-
-
 
 
 
