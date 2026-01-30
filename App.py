@@ -10,7 +10,7 @@ from io import BytesIO
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
 # Puedes usar un link directo de Pinterest o de cualquier página
-url_imagen = "https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg"
+url_imagen = ""
 
 st.markdown(
     f"""
@@ -166,6 +166,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
