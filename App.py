@@ -8,6 +8,36 @@ from pptx import Presentation
 from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
+url_imagen = "https://i.pinimg.com/736x/8b/12/34/tu_imagen_aqui.jpg"
+
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url("{https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg}");
+        background-size: cover; /* Cubre toda la pantalla sin deformarse */
+        background-position: center; /* Centrado para computadoras */
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* La imagen no se mueve al bajar la página */
+    }}
+
+    /* Ajuste para que en CELULAR se vea la mejor parte de la foto */
+    @media (max-width: 768px) {{
+        .stApp {{
+            background-position: center center; 
+        }}
+    }}
+    
+    /* Capa para que el contenido sea legible sobre la imagen */
+    .main {{
+        background-color: rgba(0, 0, 0, 0.4); 
+        padding: 20px;
+        border-radius: 20px;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 st.set_page_config(page_title="Gen", page_icon="🪄")
 st.title("🪄 Transcription and Slide Creator")
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -128,6 +158,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
