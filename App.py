@@ -117,7 +117,9 @@ if Audio_fill is not None:
             6. SLIDE SEPARATOR
             Use EXACTLY the following separator for each slide:
             
-            --- SLIDE N ---
+            ━━━━━━━━━━━━━━━━━━━━━━
+            Slide N – TITLE
+            ━━━━━━━━━━━━━━━━━━━━━━
             
             7. OUTPUT FORMAT
             - Do NOT add explanations outside the transcription and slides.
@@ -150,6 +152,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
