@@ -115,7 +115,7 @@ if Audio_fill is not None:
             - Include the complete transcription of the audio.
             - Write it only in the original language.
             - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
+                ▣ STREAMLIT TRANSCRIPTION ▣
 
             3. INSTRUCTION DETECTION:
             - Determine whether the audio contains a clear instruction to create content.
@@ -128,7 +128,7 @@ if Audio_fill is not None:
 
             Use EXACTLY this separator for each slide:
 
-            --- SLIDE N ---
+            ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
 
             5. IF NO CLEAR INSTRUCTION EXISTS:
             - Generate ONLY ONE slide.
