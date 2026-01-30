@@ -10,43 +10,21 @@ from io import BytesIO
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
 st.markdown(
-    f"""
+    """
     <style>
-    /* 1. CONFIGURACIÓN BASE (PC/Tablets) */
-    #video-background {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        object-position: center; /* Centra el video por defecto */
-        z-index: -1;
-        filter: brightness(0.4);
-    }}
-
-    /* 2. AJUSTE PARA CELULARES (Pantallas de menos de 768px) */
-    @media (max-width: 768px) {{
-        #video-background {{
-            /* Ajustamos la posición para que en celular se vea más la parte derecha (el espejo) */
-            object-position: 65% center; 
-        }}
-        
-        /* Hacemos que los textos de Streamlit no se peguen tanto a los bordes en el móvil */
-        .block-container {{
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }}
-    }}
-
-    .stApp {{
-        background: transparent;
-    }}
+    .stApp {
+        background-image: url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXF6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    /* Esto hace que el fondo de los textos sea un poco oscuro para que se lean mejor */
+    .main {
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 20px;
+        border-radius: 15px;
+    }
     </style>
-
-    <video autoplay muted loop playsinline id="video-background">
-        <source src="{video_url}" type="video/mp4">
-    </video>
     """,
     unsafe_allow_html=True
 )
@@ -170,8 +148,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
-
 
 
 
