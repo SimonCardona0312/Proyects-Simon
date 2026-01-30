@@ -110,7 +110,7 @@ if Audio_fill is not None:
             - Do not add comments outside the transcription and the slides.
             """
 
-            """
+          
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
             st.markdown("---")
@@ -134,6 +134,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
