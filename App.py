@@ -1,167 +1,140 @@
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Libraries
-import streamlit as st 
-import whisper         
-import os              
+import streamlit as st
+import whisper
 import google.generativeai as GenAI
-from pptx import Presentation 
+from pptx import Presentation
 from io import BytesIO
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# This is the visual part of the page 
+
+# 1. CONFIGURACIÓN DE LA PÁGINA
 st.set_page_config(page_title="Gen", page_icon="🪄")
-# Puedes usar un link directo de Pinterest o de cualquier página
-url_imagen = "https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg"
+
+# --- FONDO DE PANTALLA (CON FILTRO OSCURO PARA QUE SE LEA EL TEXTO) ---
+# Puedes cambiar este link por cualquier imagen de Pinterest que termine en .jpg o .png
+url_fondo = "https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg"
 
 st.markdown(
     f"""
     <style>
     .stApp {{
-        background-image: url("{url_imagen}");
-        background-size: cover; /* Cubre toda la pantalla sin deformarse */
-        background-position: center; /* Centrado para computadoras */
+        background-image: url("{url_fondo}");
+        background-size: cover;
+        background-position: center;
         background-repeat: no-repeat;
-        background-attachment: fixed; /* La imagen no se mueve al bajar la página */
+        background-attachment: fixed;
     }}
-
-    /* Ajuste para que en CELULAR se vea la mejor parte de la foto */
-    @media (max-width: 768px) {{
-        .stApp {{
-            background-position: center center; 
-        }}
+    /* Esto oscurece el fondo para que las letras blancas se lean bien */
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); 
+        z-index: -1;
     }}
-    
-    /* Capa para que el contenido sea legible sobre la imagen */
-    .main {{
-        background-color: rgba(0, 0, 0, 0.4); 
-        padding: 20px;
-        border-radius: 20px;
+    h1, h2, h3, p, div {{
+        color: white !important; /* Forza a que todo el texto sea blanco */
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
-st.title("🪄 Transcription and Slide Creator")
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Enter your API KEY here 
-GenAI.configure(api_key=st.secrets["API_KEY"])
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# PowerPoint Function
-def crear_pptx(texto):
-    prs = Presentation()
-    
-    
-    secciones = texto.split("--- SLIDE")
-    
-    for i, seccion in enumerate(secciones):
-        if seccion.strip():
 
-            slide_layout = prs.slide_layouts[1] 
+st.title("🪄 Transcription and Slide Creator")
+
+
+# 3. FUNCIÓN PARA CREAR EL POWERPOINT BONITO
+def crear_pptx(texto_generado):
+    prs = Presentation() # Usa la plantilla básica limpia
+    
+    # Dividimos por diapositivas
+    slides_content = texto_generado.split("--- SLIDE")
+
+    for slide_text in slides_content:
+        if slide_text.strip():
+            # Usamos el diseño: Título + Contenido (Layout 1)
+            slide_layout = prs.slide_layouts[1]
             slide = prs.slides.add_slide(slide_layout)
 
-            lineas = seccion.strip().split('\n')
+            # Limpiamos el texto
+            lineas = slide_text.strip().split('\n')
             
-            title_shape = slide.shapes.title
-            body_shape = slide.placeholders[1]
+            # TRUCO PRO: La primera línea será el TÍTULO, el resto el CUERPO
+            titulo = lineas[0].replace("Title:", "").replace("**", "").strip()
+            contenido = "\n".join(lineas[1:]).strip()
+
+            # Asignamos al PowerPoint real
+            if slide.shapes.title:
+                slide.shapes.title.text = titulo
             
-            title_shape.text = f"Slide {i}" if i > 0 else "Presentation Intro"
-            body_shape.text = seccion.strip()
+            if len(slide.placeholders) > 1:
+                slide.placeholders[1].text = contenido
 
     pptx_io = BytesIO()
     prs.save(pptx_io)
     return pptx_io.getvalue()
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Transcription Function
-Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "m4a"])
 
-if Audio_fill is not None:
+# 4. CARGA DE WHISPER (Modelo Base para que no se caiga)
+@st.cache_resource
+def load_whisper():
+    return whisper.load_model("base")
 
-    MAX_FILE_SIZE = 10 * 1024 * 1024
-   
-    if Audio_fill.size > MAX_FILE_SIZE:
-        st.error("The audio is too long or too short. Please upload a file shorter than 3 minutes. (MAX 10MB)")
-        st.stop()
-    else:
-       
-        with open("temp_audio.mp3", "wb") as f:
-            f.write(Audio_fill.getbuffer())
-            
-        # We show the loading message so the user can wait.
-        with st.spinner("Whisper is processing your audio"):
-            modelo_whisper = whisper.load_model("base")
-            resultado = modelo_whisper.transcribe("temp_audio.mp3")
+modelo_whisper = load_whisper()
 
-    st.success("Transcription success")
-    st.subheader("This is your transcribed text")
-    st.write(resultado["text"])
+# 5. INTERFAZ Y LÓGICA
+audio_file = st.file_uploader("Sube tu audio (MP3, WAV, M4A)", type=["mp3", "wav", "m4a"])
 
-    if st.button("✨ Generative Slides"):
+if audio_file is not None:
+    # Guardamos temporalmente el archivo
+    with open("temp_audio.mp3", "wb") as f:
+        f.write(audio_file.getbuffer())
+
+    with st.spinner("🎧 Escuchando y detectando idioma..."):
+        # Transcripción automática
+        result = modelo_whisper.transcribe("temp_audio.mp3", fp16=False)
+        texto = result["text"]
+        idioma = result["language"] # Detecta 'es' o 'en'
         
-        with st.spinner("Gemini is creating your slides..."):
-          
-            modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
+    st.success(f"Transcripción completa (Idioma: {idioma})")
+    st.write(texto)
+
+    # Botón mágico
+    if st.button("✨ Generar PowerPoint Profesional"):
+        with st.spinner("🤖 Gemini está diseñando tus diapositivas..."):
             
-            instruction = f"""
-  
-            Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
+            # PROMPT ESTRICTO PARA QUE SE VEA ORDENADO
+            modelo_gemini = GenAI.GenerativeModel('gemini-2.0-flash')
+            
+            prompt = f"""
+            Act as a professional presentation designer.
+            SOURCE TEXT: "{texto}"
+            DETECTED LANGUAGE: {idioma}
 
-            Mandatory rules:
+            INSTRUCTIONS:
+            1. Create 4 to 6 slides based on the text.
+            2. The output MUST be in the language: {idioma}.
+            3. FORMAT IS CRITICAL. Use this exact structure for every slide:
 
-            1. LANGUAGE:
-            - Detect the main language of the audio.
-            - ALL generated content MUST be EXCLUSIVELY in that language.
-            - Do not mix languages or translate.
+            --- SLIDE
+            (Write here a Short and Catchy Title)
+            - (Bullet point 1)
+            - (Bullet point 2)
+            - (Bullet point 3)
 
-            2. TRANSCRIPTION:
-            - Include the complete transcription of the audio.
-            - Write it only in the original language.
-            - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
-
-            3. INSTRUCTION DETECTION:
-            - Determine whether the audio contains a clear instruction to create content.
-
-            4. IF A CLEAR INSTRUCTION EXISTS:
-            - Generate a presentation with a MINIMUM of 5 SLIDES.
-            - Each slide must be clearly separated and numbered.
-            - Each slide must represent a distinct idea or part of the requested content.
-            - The content may be continuous text or in lines; there are no internal formatting restrictions.
-
-            Use EXACTLY this separator for each slide:
-
-            --- SLIDE N ---
-
-            5. IF NO CLEAR INSTRUCTION EXISTS:
-            - Generate ONLY ONE slide.
-            - Clearly indicate that an explicit instruction is needed in the audio.
-
-            6. FORMAT:
-            - Do not write additional explanations.
-            - Do not add comments outside the transcription and the slides.
+            Do not write "Slide 1" or labels. Just the separator, the title line, and the bullets.
             """
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            answer = modelo_gemini.generate_content(instruction)
             
-            st.header("📝 Generated Content")
+            respuesta = modelo_gemini.generate_content(prompt)
             
-            st.info("Everything is ready! You can review the content below and download your slides.")
-            st.write(answer.text)
+            # Mostramos el resultado y creamos el archivo
+            st.markdown("### Vista Previa:")
+            st.write(respuesta.text)
             
-            pptx_data = crear_pptx(answer.text)
-            
-        
-            st.write("") 
+            archivo_pptx = crear_pptx(respuesta.text)
             
             st.download_button(
-                label="🚀 DOWNLOAD YOUR POWERPOINT",
-                data=pptx_data,
-                file_name="Presentation.pptx",
-                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                use_container_width=True 
+                label="📥 DESCARGAR POWERPOINT",
+                data=archivo_pptx,
+                file_name="Presentacion_Pro.pptx",
+                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation"
             )
-            st.balloons()
-
-
-
-
-
-
