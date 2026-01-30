@@ -22,8 +22,7 @@ st.markdown(
         background-attachment: fixed; /* La imagen no se mueve al bajar la página */
     }}
 
-    /* Ajuste para que en CELULAR se vea la mejor parte de la foto */
-    @media (max-width: 768px) {{
+     (max-width: 768px) {{
         .stApp {{
             background-position: center center; 
         }}
@@ -159,6 +158,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
