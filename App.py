@@ -73,51 +73,53 @@ if Audio_fill is not None:
             
             instruction = f"""
   
-            Analiza el audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
-
-            Reglas obligatorias:
-
+            Analiza el siguiente audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
+            
+            REGLAS OBLIGATORIAS (CUMPLIMIENTO ESTRICTO):
+            
             1. IDIOMA:
-
-            Detecta el idioma principal del audio.
-
-            TODO el contenido generado DEBE estar EXCLUSIVAMENTE en ese idioma.
-
-            No mezcles idiomas ni traduzcas.
-
+            - Detecta automáticamente el idioma principal del audio.
+            - TODO el contenido generado debe estar EXCLUSIVAMENTE en ese idioma.
+            - No traduzcas, no mezcles idiomas y no expliques el idioma detectado.
+            
             2. TRANSCRIPCIÓN:
-
-            Incluye la transcripción completa del audio.
-
-            Escríbela únicamente en el idioma original.
-
-            Colócala al inicio bajo el encabezado:
-
+            - Incluye la transcripción COMPLETA y literal del audio.
+            - Escríbela únicamente en el idioma original.
+            - Debe colocarse AL INICIO del resultado bajo el encabezado EXACTO:
+            
             ▣ STREAMLIT TRANSCRIPTION ▣
-
-
+            
             3. DETECCIÓN DE INSTRUCCIONES:
-
-            Determina si el audio contiene una instrucción clara para crear contenido.
-
+            - Analiza si el audio contiene una instrucción clara para crear contenido (por ejemplo: explicar, resumir, enseñar, presentar, describir, desarrollar un tema).
+            
             4. SI EXISTE UNA INSTRUCCIÓN CLARA:
-
-            Genera una presentación con un MÍNIMO de 5 DIAPOSITIVAS.
-
-            Cada diapositiva debe estar claramente separada y numerada.
-
-            Cada diapositiva debe representar una idea distinta o una parte del contenido solicitado.
-
-            El contenido puede ser texto continuo o en líneas; no hay restricciones de formato interno.
-
-            Usa EXACTAMENTE este separador para cada diapositiva:
-
+            - Genera una presentación con EXACTAMENTE 5 DIAPOSITIVAS (no más, no menos).
+            - Cada diapositiva debe:
+              - Estar claramente numerada.
+              - Desarrollar UNA idea distinta.
+              - Contener información AMPLIA, detallada y explicativa.
+              - Tener al menos 3–5 párrafos o múltiples líneas bien desarrolladas.
+              - NO usar contenido corto, frases sueltas ni resúmenes mínimos.
+            
+            - Usa EXACTAMENTE este separador para cada diapositiva:
+            
             ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
-
-
+            
+            (reemplaza N por el número correspondiente)
+            
             5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
+            - Crea EXACTAMENTE 5 diapositivas.
+            - Cada diapositiva debe explicar de forma detallada lo que se menciona en el audio.
+            - Amplía las ideas, proporciona contexto y ejemplos cuando sea posible.
+            - En la ÚLTIMA diapositiva, explica claramente al usuario que puede solicitar algo más específico si lo desea.
+            - El contenido interno de cada diapositiva debe ser extenso y explicativo, nunca breve.
+            
+            6. PROHIBICIONES:
+            - No incluyas conclusiones fuera de las diapositivas.
+            - No agregues texto antes o después de las secciones.
+            - No uses viñetas excesivamente cortas.
+            - No generes menos de 5 diapositivas bajo ninguna circunstancia.
 
-            crea  minimo 5 diapositivas explicando lo que dijo en el audio y explicandole al usuario que si quiere algo mas especifico 
 
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -143,6 +145,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
