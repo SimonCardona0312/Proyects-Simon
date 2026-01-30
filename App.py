@@ -73,55 +73,67 @@ if Audio_fill is not None:
             
             instruction = f"""
   
-            Analiza el siguiente audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
-            
-            REGLAS OBLIGATORIAS (CUMPLIMIENTO ESTRICTO):
-            
-            1. IDIOMA:
-            - Detecta automáticamente el idioma principal del audio.
-            - TODO el contenido generado debe estar EXCLUSIVAMENTE en ese idioma.
-            - No traduzcas, no mezcles idiomas y no expliques el idioma detectado.
-            
-            2. TRANSCRIPCIÓN:
-            - Incluye la transcripción COMPLETA y literal del audio.
-            - Escríbela únicamente en el idioma original.
-            - Debe colocarse AL INICIO del resultado bajo el encabezado EXACTO:
-            
-            ▣ STREAMLIT TRANSCRIPTION ▣
-            
-            3. DETECCIÓN DE INSTRUCCIONES:
-            - Analiza si el audio contiene una instrucción clara para crear contenido (por ejemplo: explicar, resumir, enseñar, presentar, describir, desarrollar un tema).
-            
-            4. SI EXISTE UNA INSTRUCCIÓN CLARA:
-            - Genera una presentación con EXACTAMENTE 5 DIAPOSITIVAS (no más, no menos).
-            - Cada diapositiva debe:
-              - Estar claramente numerada.
-              - Desarrollar UNA idea distinta.
-              - Contener información AMPLIA, detallada y explicativa.
-              - Tener al menos 3–5 párrafos o múltiples líneas bien desarrolladas.
-              - NO usar contenido corto, frases sueltas ni resúmenes mínimos.
-            
-            - Usa EXACTAMENTE este separador para cada diapositiva:
-            
-            ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
-            
-            (reemplaza N por el número correspondiente)
-            
-            5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
-            - Crea EXACTAMENTE 5 diapositivas.
-            - Cada diapositiva debe explicar de forma detallada lo que se menciona en el audio.
-            - Amplía las ideas, proporciona contexto y ejemplos cuando sea posible.
-            - En la ÚLTIMA diapositiva, explica claramente al usuario que puede solicitar algo más específico si lo desea.
-            - El contenido interno de cada diapositiva debe ser extenso y explicativo, nunca breve.
-            
-            6. PROHIBICIONES:
-            - No incluyas conclusiones fuera de las diapositivas.
-            - No agregues texto antes o después de las secciones.
-            - No uses viñetas excesivamente cortas.
-            - No generes menos de 5 diapositivas bajo ninguna circunstancia.
-
-
-            """
+                    Analiza el siguiente audio: {resultado['text']}
+                    
+                    DEBES generar la respuesta en BLOQUES SEPARADOS.
+                    NO puedes escribir todo el contenido en un solo bloque.
+                    Cada bloque representa UNA diapositiva independiente.
+                    
+                    REGLAS INQUEBRANTABLES:
+                    
+                    1. IDIOMA
+                    - Detecta el idioma principal del audio.
+                    - TODO el contenido DEBE estar exclusivamente en ese idioma.
+                    - No mezcles idiomas.
+                    - No traduzcas.
+                    
+                    2. TRANSCRIPCIÓN
+                    - Incluye la transcripción COMPLETA del audio.
+                    - Escríbela únicamente en el idioma original.
+                    - Colócala AL INICIO bajo el encabezado EXACTO:
+                    
+                    ▣ STREAMLIT TRANSCRIPTION ▣
+                    
+                    3. DETECCIÓN DE INSTRUCCIÓN
+                    - Determina si el audio contiene una instrucción clara para crear contenido.
+                    
+                    4. GENERACIÓN DE DIAPOSITIVAS (OBLIGATORIO)
+                    - DEBES crear EXACTAMENTE 5 diapositivas.
+                    - NO más, NO menos.
+                    - CADA diapositiva debe escribirse en un BLOQUE SEPARADO.
+                    - NUNCA combines dos diapositivas en el mismo bloque.
+                    - NUNCA pongas todo el texto seguido.
+                    
+                    5. FORMATO OBLIGATORIO (CRÍTICO)
+                    Antes de escribir el contenido de CADA diapositiva, escribe EXACTAMENTE este separador en una línea independiente:
+                    
+                    ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
+                    
+                    (reemplaza N por 1, 2, 3, 4 y 5)
+                    
+                    6. CONTENIDO DE CADA DIAPOSITIVA
+                    - Cada diapositiva debe desarrollar UNA idea distinta.
+                    - El contenido NO puede ser corto.
+                    - Cada diapositiva debe tener:
+                      - Explicación extensa
+                      - Contexto
+                      - Desarrollo claro del tema
+                    - MÍNIMO recomendado: 120–150 palabras por diapositiva.
+                    
+                    7. SI EXISTE UNA INSTRUCCIÓN CLARA EN EL AUDIO
+                    - Las 5 diapositivas deben cumplir exactamente la instrucción solicitada.
+                    
+                    8. SI NO EXISTE UNA INSTRUCCIÓN CLARA
+                    - Las 5 diapositivas deben explicar detalladamente lo que dice el audio.
+                    - La diapositiva 5 debe indicar claramente que el usuario puede pedir algo más específico.
+                    
+                    9. PROHIBICIONES ABSOLUTAS
+                    - No escribas texto fuera de las diapositivas.
+                    - No hagas resúmenes generales.
+                    - No generes una sola diapositiva.
+                    - No ignores los separadores.
+                    - No compactes el contenido.
+                    """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
             st.markdown("---")
@@ -145,6 +157,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
