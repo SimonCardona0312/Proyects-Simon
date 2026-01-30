@@ -8,7 +8,8 @@ from pptx import Presentation
 from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
-st.set_page_config(page_title="Gen", page_icon="🪄")st.markdown(
+st.set_page_config(page_title="Gen", page_icon="🪄")
+st.markdown(
     f"""
     <style>
     /* 1. CONFIGURACIÓN BASE (PC/Tablets) */
@@ -169,6 +170,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
