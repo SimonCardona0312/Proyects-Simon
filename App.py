@@ -42,7 +42,7 @@ def crear_pptx(texto):
     return pptx_io.getvalue()
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Transcription Function
-Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "opus" , "m4a"])
+Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" ,"wav", "m4a"])
 
 if Audio_fill is not None:
 
@@ -58,7 +58,7 @@ if Audio_fill is not None:
             
         # We show the loading message so the user can wait.
         with st.spinner("Whisper is processing your audio"):
-            modelo_whisper = whisper.load_model("base")
+            modelo_whisper = whisper.load_model("small")
             resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
@@ -72,53 +72,54 @@ if Audio_fill is not None:
             modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
             instruction = f"""
-                Analiza el siguiente audio transcrito: {resultado["text"]}
+  
+            Analiza el audio: {resultado['text']} y genera ÚNICAMENTE diapositivas claramente separadas.
 
-                Tu tarea es generar ÚNICAMENTE diapositivas claramente separadas, cumpliendo TODAS las reglas a continuación sin excepción.
-                
-                ────────────────────────
-                REGLAS OBLIGATORIAS
-                ────────────────────────
-                
-                1. IDIOMA
-                - Detecta automáticamente el idioma principal del audio.
-                - TODO el contenido generado debe estar EXCLUSIVAMENTE en ese idioma.
-                - No traduzcas, no mezcles idiomas y no aclares en otro idioma.
-                
-                2. TRANSCRIPCIÓN
-                - Incluye la transcripción COMPLETA del audio.
-                - Escríbela exactamente en el idioma original detectado.
-                - Debe aparecer AL INICIO del resultado, bajo el encabezado EXACTO:
-                
-                ▣ STREAMLIT TRANSCRIPTION ▣
-                
-                3. DETECCIÓN DE INSTRUCCIONES
-                - Analiza si el audio contiene una instrucción CLARA y EXPLÍCITA para crear contenido
-                  (por ejemplo: “haz una presentación”, “explícame”, “resume”, “crea diapositivas”, etc.).
-                
-                4. SI EXISTE UNA INSTRUCCIÓN CLARA
-                - Genera una presentación con un MÍNIMO de 5 diapositivas.
-                - Cada diapositiva debe:
-                  - Estar claramente separada
-                  - Estar numerada
-                  - Representar UNA idea distinta o una parte del contenido solicitado
-                - Usa EXACTAMENTE este separador para cada diapositiva (sin modificarlo):
-                
-                ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
-                
-                5. SI NO EXISTE UNA INSTRUCCIÓN CLARA
-                - Crea un MÍNIMO de 5 diapositivas:
-                  - Explicando claramente el contenido del audio
-                  - Resumiendo y estructurando lo que se dijo
-                  - Indicando al usuario que puede solicitar algo más específico si lo desea
-                - Mantén el mismo formato y separador de diapositivas indicado arriba.
-                
-                6. FORMATO
-                - No incluyas texto fuera de la transcripción y las diapositivas.
-                - No agregues introducciones, conclusiones ni explicaciones adicionales.
-                """
+            Reglas obligatorias:
 
-          
+            1. IDIOMA:
+
+            Detecta el idioma principal del audio.
+
+            TODO el contenido generado DEBE estar EXCLUSIVAMENTE en ese idioma.
+
+            No mezcles idiomas ni traduzcas.
+
+            2. TRANSCRIPCIÓN:
+
+            Incluye la transcripción completa del audio.
+
+            Escríbela únicamente en el idioma original.
+
+            Colócala al inicio bajo el encabezado:
+
+            ▣ STREAMLIT TRANSCRIPTION ▣
+
+
+            3. DETECCIÓN DE INSTRUCCIONES:
+
+            Determina si el audio contiene una instrucción clara para crear contenido.
+
+            4. SI EXISTE UNA INSTRUCCIÓN CLARA:
+
+            Genera una presentación con un MÍNIMO de 5 DIAPOSITIVAS.
+
+            Cada diapositiva debe estar claramente separada y numerada.
+
+            Cada diapositiva debe representar una idea distinta o una parte del contenido solicitado.
+
+            El contenido puede ser texto continuo o en líneas; no hay restricciones de formato interno.
+
+            Usa EXACTAMENTE este separador para cada diapositiva:
+
+            ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
+
+
+            5. SI NO EXISTE UNA INSTRUCCIÓN CLARA:
+
+            crea  minimo 5 diapositivas explicando lo que dijo en el audio y explicandole al usuario que si quiere algo mas especifico 
+
+            """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
             st.markdown("---")
@@ -142,12 +143,6 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
-
-
-
-
-
-
 
 
 
