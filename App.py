@@ -9,7 +9,7 @@ from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
-url_imagen = "https://i.pinimg.com/originals/60/ff/b4/60ffb43cb529cb62b7081df7115ea684.jpg"
+url_imagen = "https://i.pinimg.com/1200x/e2/fb/e1/e2fbe1efaf7427c75a7c0d8e5c706bfb.jpg"
 
 st.markdown(
     f"""
@@ -159,6 +159,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
