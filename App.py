@@ -14,7 +14,7 @@ st.markdown(
     f"""
     <style>
     .stApp {{
-        background-image: url("{https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg}");
+        background-image: url("{url_imagen}");
         background-size: cover; /* Cubre toda la pantalla sin deformarse */
         background-position: center; /* Centrado para computadoras */
         background-repeat: no-repeat;
@@ -158,6 +158,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
