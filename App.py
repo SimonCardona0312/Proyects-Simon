@@ -9,44 +9,33 @@ from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
+url_imagen = "https://i.pinimg.com/originals/60/ff/b4/60ffb43cb529cb62b7081df7115ea684.jpg"
+
 st.markdown(
     f"""
     <style>
-    /* 1. CONFIGURACIÓN BASE (PC/Tablets) */
-    #video-background {{
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        object-position: center; /* Centra el video por defecto */
-        z-index: -1;
-        filter: brightness(0.4);
-    }}
-
-    /* 2. AJUSTE PARA CELULARES (Pantallas de menos de 768px) */
-    @media (max-width: 768px) {{
-        #video-background {{
-            /* Ajustamos la posición para que en celular se vea más la parte derecha (el espejo) */
-            object-position: 65% center; 
-        }}
-        
-        /* Hacemos que los textos de Streamlit no se peguen tanto a los bordes en el móvil */
-        .block-container {{
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }}
-    }}
-
     .stApp {{
-        background: transparent;
+        background-image: url("{url_imagen}");
+        background-size: cover; /* Cubre toda la pantalla sin deformarse */
+        background-position: center; /* Centrado para computadoras */
+        background-repeat: no-repeat;
+        background-attachment: fixed; /* La imagen no se mueve al bajar la página */
+    }}
+
+    /* Ajuste para que en CELULAR se vea la mejor parte de la foto */
+    @media (max-width: 768px) {{
+        .stApp {{
+            background-position: center center; 
+        }}
+    }}
+    
+    /* Capa para que el contenido sea legible sobre la imagen */
+    .main {{
+        background-color: rgba(0, 0, 0, 0.4); 
+        padding: 20px;
+        border-radius: 20px;
     }}
     </style>
-
-    <video autoplay muted loop playsinline id="video-background">
-        <source src="{"https://www.youtube.com/watch?v=_mSCu8q0t7g&list=PLCYBQp7vbvBHqtaozeouLD9ek-GuiMcjo"}" type="video/mp4">
-    </video>
     """,
     unsafe_allow_html=True
 )
