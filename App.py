@@ -9,35 +9,6 @@ from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
-url_imagen = "https://i.pinimg.com/originals/8e/3c/5e/8e3c5ef2d8aa56efb980fb6e16819620.jpg"
-
-st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background-image: url("{url_imagen}");
-        background-size: cover; /* Cubre toda la pantalla sin deformarse */
-        background-position: center; /* Centrado para computadoras */
-        background-repeat: no-repeat;
-        background-attachment: fixed; /* La imagen no se mueve al bajar la página */
-    }}
-
-     (max-width: 768px) {{
-        .stApp {{
-            background-position: center center; 
-        }}
-    }}
-    
-    /* Capa para que el contenido sea legible sobre la imagen */
-    .main {{
-        background-color: rgba(0, 0, 0, 0.4); 
-        padding: 20px;
-        border-radius: 20px;
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 st.title("🪄 Transcription and Slide Creator")
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Enter your API KEY here 
@@ -113,7 +84,7 @@ if Audio_fill is not None:
             - Include the complete transcription of the audio.
             - Write it only in the original language.
             - Place it at the beginning under the heading:
-                ▣ STREAMLIT TRANSCRIPTION ▣
+                === TRANSCRIPTION ===
 
             3. INSTRUCTION DETECTION:
             - Determine whether the audio contains a clear instruction to create content.
@@ -126,8 +97,7 @@ if Audio_fill is not None:
 
             Use EXACTLY this separator for each slide:
 
-            ⎯⎯⎯ SECTION: SLIDE N ⎯⎯⎯
-
+            --- SLIDE N ---
 
             5. IF NO CLEAR INSTRUCTION EXISTS:
             - Generate ONLY ONE slide.
@@ -139,7 +109,7 @@ if Audio_fill is not None:
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
-
+            st.markdown("---")
             st.header("📝 Generated Content")
             
             st.info("Everything is ready! You can review the content below and download your slides.")
@@ -158,10 +128,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
-
-
-
 
 
 
