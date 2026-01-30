@@ -56,7 +56,7 @@ if Audio_fill is not None:
             
         # We show the loading message so the user can wait.
         with st.spinner("Whisper is processing your audio"):
-            modelo_whisper = whisper.load_model("base")
+            modelo_whisper = whisper.load_model("small")
             resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
@@ -128,6 +128,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
