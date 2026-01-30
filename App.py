@@ -139,7 +139,7 @@ if Audio_fill is not None:
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
-            st.markdown("---")
+        
             st.header("📝 Generated Content")
             
             st.info("Everything is ready! You can review the content below and download your slides.")
@@ -158,6 +158,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
