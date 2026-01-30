@@ -9,6 +9,25 @@ from io import BytesIO
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXF6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+    /* Esto hace que el fondo de los textos sea un poco oscuro para que se lean mejor */
+    .main {
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 20px;
+        border-radius: 15px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 st.title("🪄 Transcription and Slide Creator")
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Enter your API KEY here 
@@ -110,24 +129,7 @@ if Audio_fill is not None:
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
-            st.markdown("""
-                <style>
-                .stApp {
-                    background-image: url("https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueXF6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKVUn7iM8FMEU24/giphy.gif");
-                    background-size: cover;
-                    background-repeat: no-repeat;
-                    background-attachment: fixed;
-                }
-                /* Esto hace que el fondo de los textos sea un poco oscuro para que se lean mejor */
-                .main {
-                    background-color: rgba(0, 0, 0, 0.6);
-                    padding: 20px;
-                    border-radius: 15px;
-                }
-                </style>
-                """,
-                unsafe_allow_html=True
-            )
+
             st.header("📝 Generated Content")
             
             st.info("Everything is ready! You can review the content below and download your slides.")
