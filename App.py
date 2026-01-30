@@ -72,42 +72,60 @@ if Audio_fill is not None:
             modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash')
             
             instruction = f"""
-  
+              
             Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
-
-            Mandatory rules:
-
-            1. LANGUAGE:
+            
+            MANDATORY RULES:
+            
+            1. LANGUAGE
             - Detect the main language of the audio.
             - ALL generated content MUST be EXCLUSIVELY in that language.
             - Do not mix languages or translate.
-
-            2. TRANSCRIPTION:
-            - Include the complete transcription of the audio.
-            - Write it only in the original language.
-            - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
-
-            3. INSTRUCTION DETECTION:
-            - Determine whether the audio contains a clear instruction to create content.
-
-            4. IF A CLEAR INSTRUCTION EXISTS:
+            
+            2. TRANSCRIPTION
+            - Include the COMPLETE transcription of the audio.
+            - Write it ONLY in the original language.
+            - Place it at the very beginning under the heading:
+              === TRANSCRIPTION ===
+            
+            3. INSTRUCTION & COHERENCE DETECTION
+            - Determine whether the audio contains:
+              a) A clear instruction to create content, OR
+              b) No clear instruction and/or incoherent, vague, or informal speech.
+            
+            4. IF A CLEAR INSTRUCTION EXISTS
             - Generate a presentation with a MINIMUM of 5 SLIDES.
-            - Each slide must be clearly separated and numbered.
-            - Each slide must represent a distinct idea or part of the requested content.
-            - The content may be continuous text or in lines; there are no internal formatting restrictions.
-
-            Use EXACTLY this separator for each slide:
-
+            - Each slide must:
+              - Be clearly separated and numbered.
+              - Represent a distinct idea or section of the requested content.
+            - Content can be free-form text or lines (no internal formatting restrictions).
+            
+            5. IF NO CLEAR INSTRUCTION EXISTS OR THE AUDIO IS INCOHERENT
+            - STILL generate a presentation with EXACTLY 5 SLIDES.
+            - The slides must:
+              - Analyze ONLY what is actually present in the audio.
+              - NOT invent facts, topics, or intentions.
+              - Describe the nature, limitations, and possible interpretation of the audio.
+            - The structure should resemble an analytical or diagnostic presentation, for example:
+              - Introduction / Detected content
+              - Context (or lack of it)
+              - Coherence analysis
+              - Possible interpretations
+              - Recommendation or next steps
+            - Include speaker notes when relevant, explicitly stating that no clear instruction or topic is present.
+            
+            6. SLIDE SEPARATOR
+            Use EXACTLY the following separator for each slide:
+            
             --- SLIDE N ---
+            
+            7. OUTPUT FORMAT
+            - Do NOT add explanations outside the transcription and slides.
+            - Do NOT add meta-comments or system notes.
+            - Output ONLY:
+              1) The transcription
+              2) The slides
 
-            5. IF NO CLEAR INSTRUCTION EXISTS:
-            - Generate ONLY ONE slide.
-            - Clearly indicate that an explicit instruction is needed in the audio.
-
-            6. FORMAT:
-            - Do not write additional explanations.
-            - Do not add comments outside the transcription and the slides.
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
@@ -132,6 +150,7 @@ if Audio_fill is not None:
                 use_container_width=True # Esto hace que el botón ocupe todo el ancho
             )
             st.balloons()
+
 
 
 
