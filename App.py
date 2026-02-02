@@ -7,6 +7,7 @@ import google.generativeai as GenAI
 from pptx import Presentation 
 from io import BytesIO
 from pptx.util import Pt
+import re
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
@@ -269,6 +270,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
