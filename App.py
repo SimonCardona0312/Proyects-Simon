@@ -7,6 +7,7 @@ import google.generativeai as GenAI
 from pptx import Presentation 
 from io import BytesIO
 from pptx.util import Pt
+from pptx.enum.text import MSO_AUTO_SIZE
 import re
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
@@ -98,6 +99,8 @@ def crear_pptx(texto_generado):
         if len(slide.placeholders) > 1:
             tf = slide.placeholders[1].text_frame
             tf.clear()  # limpia contenido por defecto
+            tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
+
             if bullets:
                 # primer párrafo
                 p = tf.paragraphs[0]
@@ -270,7 +273,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
 
 
 
