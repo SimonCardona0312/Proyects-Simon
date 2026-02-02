@@ -143,6 +143,7 @@ Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["m
 
 if Audio_fill is not None:
     st.subheader("🎧Preview your audio")
+    st.audio(Audio_fill)
 
 if Audio_fill is not None:
 
@@ -266,6 +267,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
