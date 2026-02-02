@@ -110,40 +110,74 @@ if Audio_fill is not None:
             Analyze the audio: {resultado['text']} and generate ONLY clearly separated slides.
 
             Mandatory rules:
-
             1. LANGUAGE:
-            - Detect the main language of the audio.
-            - ALL generated content MUST be EXCLUSIVELY in that language.
-            - Do not mix languages or translate.
+
+            Detect the main language of the audio.
+
+            ALL generated content MUST be EXCLUSIVELY in that language.
+
+            Do not mix languages or translate.
 
             2. TRANSCRIPTION:
-            - Include the complete transcription of the audio.
-            - Write it only in the original language.
-            - Place it at the beginning under the heading:
-                === TRANSCRIPTION ===
+
+            Include the complete transcription of the audio.
+
+            Write it only in the original language.
+
+            Place it at the beginning under the heading:
+
+            === TRANSCRIPTION ===
 
             3. INSTRUCTION DETECTION:
-            - Determine whether the audio contains a clear instruction to create content.
+
+            Determine whether the audio contains a clear instruction to create content.
 
             4. IF A CLEAR INSTRUCTION EXISTS:
-            - Generate a presentation with a MINIMUM of 5 SLIDES.
-            - Each slide must be clearly separated and numbered.
-            - Each slide must represent a distinct idea or part of the requested content.
-            - The content may be continuous text or in lines; there are no internal formatting restrictions.
-            - Inside each slide: The first line must be a short Title, and the following lines the content.
-            - Use bullet points for the content.
+
+            Generate a presentation with a MINIMUM of 5 SLIDES.
+
+            Each slide must be clearly separated and numbered.
+
+            Each slide must represent a distinct idea or part of the requested content.
+
+            The content may be continuous text or in lines.
+
+            Inside each slide:
+
+            The first line must be a short Title.
+
+            The following lines must be bullet-point content.
 
             Use EXACTLY this separator for each slide:
 
             --- SLIDE N ---
 
             5. IF NO CLEAR INSTRUCTION EXISTS:
-            - Generate ONLY ONE slide.
-            - Clearly indicate that an explicit instruction is needed in the audio.
 
-            6. FORMAT:
-            - Do not write additional explanations.
-            - Do not add comments outside the transcription and the slides.
+            Generate ONLY ONE slide.
+
+            Clearly indicate that an explicit instruction is needed in the audio.
+
+            6. SPEAKER NOTES (MANDATORY):
+
+            Every slide MUST include real speaker notes.
+
+            Speaker notes must NOT be included in the slide body.
+
+            Speaker notes must be written as full explanatory text intended for a presenter.
+
+            Speaker notes must be placed exclusively in the PowerPoint field:
+
+            notes_slide
+
+            7. FORMAT RESTRICTIONS:
+
+            Do not write additional explanations.
+
+            Do not add comments outside the defined structure.
+
+            Output must be strictly structured for PowerPoint slide + notes separation.
+
             """
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             answer = modelo_gemini.generate_content(instruction)
@@ -166,7 +200,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
 
 
 
