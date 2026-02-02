@@ -142,6 +142,9 @@ def crear_pptx(texto_generado):
 Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" , "opus" ,"wav", "m4a"])
 
 if Audio_fill is not None:
+    st.subheader("🎧Preview your audio")
+
+if Audio_fill is not None:
 
     MAX_FILE_SIZE = 10 * 1024 * 1024
    
@@ -263,6 +266,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
