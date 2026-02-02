@@ -12,7 +12,7 @@ from pptx.util import Pt
 st.set_page_config(page_title="Gen", page_icon="🪄")
 st.markdown("""
 <h1 style="
-    color: #00E5FF;
+    color: #FFFFFF;
     text-align: center;
     text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
 ">
@@ -268,6 +268,7 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
+
 
 
 
