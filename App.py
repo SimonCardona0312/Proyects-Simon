@@ -10,8 +10,6 @@ from pptx.util import Pt
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
-# Puedes usar un link directo de Pinterest o de cualquier página
-
 st.markdown("""
 <h1 style="
     color: #00E5FF;
@@ -21,7 +19,30 @@ st.markdown("""
 🪄 Transcription and Slide Creator
 </h1>
 """, unsafe_allow_html=True)
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Url_Imagen = "https://i.pinimg.com/originals/4a/7f/2f/4a7f2fb7633318a112ef95be51b91a19.jpg"
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: url("{Url_Imagen}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
 
+    /* Capa oscura para que el texto se lea bien */
+    .main {{
+        background-color: rgba(0, 0, 0, 0.45);
+        padding: 20px;
+        border-radius: 20px;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Enter your API KEY here 
 GenAI.configure(api_key=st.secrets["API_KEY"])
