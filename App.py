@@ -7,7 +7,6 @@ import google.generativeai as GenAI
 from pptx import Presentation 
 from io import BytesIO
 from pptx.util import Pt
-import re
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # This is the visual part of the page 
 st.set_page_config(page_title="Gen", page_icon="🪄")
@@ -145,6 +144,7 @@ if Audio_fill is not None:
     st.subheader("🎧Preview your audio")
     st.audio(Audio_fill)
 
+
 if Audio_fill is not None:
 
     MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -163,8 +163,8 @@ if Audio_fill is not None:
             resultado = modelo_whisper.transcribe("temp_audio.mp3")
 
     st.success("Transcription success")
-    st.subheader("This is your transcribed text")
-    st.write(resultado["text"])
+    with st.expander("Show transcription"):
+        st.write(resultado["text"])
 
     if st.button("✨ Generative Slides"):
         
@@ -267,9 +267,6 @@ if Audio_fill is not None:
                 use_container_width=True 
             )
             st.balloons()
-
-
-
 
 
 
