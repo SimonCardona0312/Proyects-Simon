@@ -274,7 +274,8 @@ if Audio_fill is not None:
             )
             st.balloons()
 
-
+            if os.path.exists("temp_audio.mp3"):
+                os.remove("temp_audio.mp3")
 
 
 
