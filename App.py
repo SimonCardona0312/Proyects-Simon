@@ -61,96 +61,86 @@ else:
 def crear_pptx(texto_generado):
     prs = Presentation()
 
-    # Busca bloques entre --- SLIDE N ---
+    # Configuración de colores (puedes cambiarlos aquí)
+    COLOR_FONDO = RGBColor(30, 30, 30)    # Gris muy oscuro/negro
+    COLOR_TITULO = RGBColor(0, 176, 240)  # Celeste brillante
+    COLOR_TEXTO = RGBColor(255, 255, 255) # Blanco
+
     pattern = r"---\s*SLIDE\s*\d+\s*---\s*(.*?)\s*(?=(?:---\s*SLIDE\s*\d+\s*---)|\Z)"
     slides = re.findall(pattern, texto_generado, flags=re.S)
 
-    # Fallback si no encuentra el patrón (mantén compatibilidad)
     if not slides:
         slides = [s for s in re.split(r"---\s*SLIDE", texto_generado) if s.strip()]
 
     for slide_text in slides:
-        # Limpia líneas vacías
         lines = [l.strip() for l in slide_text.strip().splitlines() if l.strip()]
         if not lines:
             continue
 
-        # Primera línea = título
-        # Quitamos caracteres markdown del título si los hay (como ** o #)
-        title_raw = lines[0]
-        title_clean = re.sub(r'^#\s*', '', title_raw).replace('*', '') 
+        title_clean = re.sub(r'^#\s*', '', lines[0]).replace('*', '') 
         
-        # Buscamos si hay una sección de notas (ej: empieza con "notes" o "notes_slide")
+        # Crear diapositiva en blanco para tener control total
+        slide_layout = prs.slide_layouts[6] # Layout vacío
+        slide = prs.slides.add_slide(slide_layout)
+
+        # 1. Pintar el fondo de la diapositiva
+        background = slide.background
+        fill = background.fill
+        fill.solid()
+        fill.fore_color.rgb = COLOR_FONDO
+
+        # 2. Añadir un rectángulo decorativo para el título
+        shape = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, Pt(60)
+        )
+        shape.fill.solid()
+        shape.fill.fore_color.rgb = RGBColor(50, 50, 50) # Gris un poco más claro
+        shape.line.fill.background() # Sin borde
+
+        # 3. Añadir el Título
+        title_box = slide.shapes.add_textbox(Pt(20), Pt(10), prs.slide_width - Pt(40), Pt(50))
+        tf_title = title_box.text_frame
+        p_title = tf_title.paragraphs[0]
+        p_title.text = title_clean
+        p_title.font.bold = True
+        p_title.font.size = Pt(32)
+        p_title.font.color.rgb = COLOR_TITULO
+
+        # 4. Procesar el contenido (bullets)
         notes_idx = None
         for i, ln in enumerate(lines[1:], start=1):
-            if ln.lower().startswith("notes") or ln.lower().startswith("notes_slide") or ln.lower().startswith("notes:"):
+            if any(ln.lower().startswith(x) for x in ["notes", "notes_slide", "notes:"]):
                 notes_idx = i
                 break
 
-        if notes_idx is not None:
-            bullets_lines = lines[1:notes_idx]
-            notes_lines = lines[notes_idx+1:]  # lo que venga después de la etiqueta notes
-        else:
-            bullets_lines = lines[1:]
-            notes_lines = []
+        bullets_lines = lines[1:notes_idx] if notes_idx else lines[1:]
+        
+        # Caja de texto para el contenido
+        body_box = slide.shapes.add_textbox(Pt(40), Pt(80), prs.slide_width - Pt(80), prs.slide_height - Pt(100))
+        tf_body = body_box.text_frame
+        tf_body.word_wrap = True
 
-        # Normaliza bullets: Solo quitamos asteriscos o guiones al INICIO, 
-        # pero DEJAMOS los emojis (🔹, etc) porque sirven de decoración.
-        bullets = [re.sub(r'^[\*\-\u2022]\s*', '', b) for b in bullets_lines]
+        for i, b in enumerate(bullets_lines):
+            # Ignorar la línea de "Visual Concept" en la diapositiva para que no ensucie
+            if "visual concept" in b.lower():
+                continue
+                
+            p = tf_body.add_paragraph() if i > 0 else tf_body.paragraphs[0]
+            p.text = re.sub(r'^[\*\-\u2022]\s*', '', b)
+            p.font.size = Pt(20)
+            p.font.color.rgb = COLOR_TEXTO
+            p.space_after = Pt(10)
 
-        # Crea la diapositiva con layout "Título y contenido"
-        slide_layout = prs.slide_layouts[1]
-        slide = prs.slides.add_slide(slide_layout)
-
-        # Título
-        if slide.shapes.title:
-            slide.shapes.title.text = title_clean
-
-        # Cuerpo (placeholders[1]) -> formatear como bullets nativos
-        if len(slide.placeholders) > 1:
-            tf = slide.placeholders[1].text_frame
-            tf.clear()  # limpia contenido por defecto
-            tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
-
-            if bullets:
-                # primer párrafo
-                p = tf.paragraphs[0]
-                p.text = bullets[0]
-                p.level = 0
-                # ajustar tamaño fuente
-                for run in p.runs:
-                    run.font.size = Pt(22) # Un poco más grande para mejor lectura
-
-                # resto de bullets
-                for b in bullets[1:]:
-                    p = tf.add_paragraph()
-                    p.text = b
-                    p.level = 0
-                    for run in p.runs:
-                        run.font.size = Pt(20)
-            else:
-                tf.text = ""
-
-
-        # Notas del orador (speaker notes) — aquí vamos a escribirlas
-        notes_text = ""
-        if notes_lines:
-            notes_text = "\n".join(notes_lines)
-        else:
-            # Si no hay sección explícita de notas, usamos los bullets como guía
-            notes_text = "\n".join(bullets)
-
-        # Asigna las notas reales
+        # 5. Notas del orador
+        notes_lines = lines[notes_idx+1:] if notes_idx else bullets_lines
         try:
-            slide.notes_slide.notes_text_frame.text = notes_text
-        except Exception:
+            slide.notes_slide.notes_text_frame.text = "\n".join(notes_lines)
+        except:
             pass
 
-    # Guarda a bytes
     pptx_io = BytesIO()
     prs.save(pptx_io)
     return pptx_io.getvalue()
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Transcription Function
 Audio_fill = st.file_uploader("Upload your audio so we can transcribe", type=["mp3", "mp4" , "opus" ,"wav", "m4a"])
@@ -263,4 +253,5 @@ if Audio_fill is not None:
 
                 if os.path.exists("temp_audio.mp3"):
                     os.remove("temp_audio.mp3")
+
 
