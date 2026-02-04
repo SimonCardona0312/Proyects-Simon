@@ -182,7 +182,7 @@ if Audio_fill is not None:
             
             with st.spinner("Gemini is creating your slides..."):
               
-                modelo_gemini = GenAI.GenerativeModel('models/gemini-2.0-flash') # He actualizado al modelo flash más rápido si está disponible, o usa 1.5
+                modelo_gemini = GenAI.GenerativeModel('models/gemini-2.5-flash') # He actualizado al modelo flash más rápido si está disponible, o usa 1.5
                 
                 # --- NUEVO PROMPT MEJORADO PARA DISEÑO ---
                 instruction = f"""
@@ -263,3 +263,4 @@ if Audio_fill is not None:
 
                 if os.path.exists("temp_audio.mp3"):
                     os.remove("temp_audio.mp3")
+
